@@ -1,7 +1,4 @@
-import chess
-import Board
-from logger import log
-
+from ChessImports import *
 
 """
 node:

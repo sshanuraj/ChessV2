@@ -1,4 +1,4 @@
-import chess
+from ChessImports import *
 
 class Board:
     def __init__(self):
@@ -25,7 +25,7 @@ class Board:
             moves.append(str(move))
         return moves
 
-    def printBoard(self):
+    def print_board(self):
         print(self.board)
 
     def un_move(self):
