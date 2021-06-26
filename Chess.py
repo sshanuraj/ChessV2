@@ -13,7 +13,7 @@ class Chess:
     def play(self, w, b, n):
         for i in range(n):
             moves=[]
-            n_iterations=1000
+            n_iterations=100
             self.board.reset()
             while True:
                 #white generates move
