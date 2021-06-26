@@ -5,7 +5,7 @@ class Board:
         self.board = chess.Board()
 
     def make_move(self, move):
-        self.board.Move.from_uci(move)
+        self.board.push(chess.Move.from_uci(move))
 
     def is_checkmate(self):
         return self.board.is_checkmate()
