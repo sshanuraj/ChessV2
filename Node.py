@@ -1,4 +1,5 @@
 from ChessImports import *
+from ChessVars import *
 from Board import Board
 
 """
@@ -92,13 +93,22 @@ class Node:
         maxInd=rd.randint(0,l1-1)
         return self.children[maxInd]
 
+    def populate_node(self):
+        if self.isTerminal:
+            return False
+        curr_state=self.state
+        b=Board()
+        vb=b.get_virtual_board(curr_state)
+        lm=b.get_virtual_move_str(vb)
+        l=len(lm)
+        for i in range(l):
+            move=lm[i]
+            afterMoveState=b.make_virtual_move(move, vb)
+            self.children.append(Node(self, afterMoveState, self.nodeLevel+1, i))
+
 b=Board()
 root=Node(None, b.board_fen(), 0, 0)
-b.make_move("e2e4")
-
-n=Node(root, b.board_fen(), 1, 0)
-root.children.append(n)
-
-root.show_node()
-root.children[0].show_node()
-
+root.populate_node()
+root.children[0].populate_node()
+for i in root.children[0].children:
+    i.show_node()

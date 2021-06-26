@@ -21,7 +21,7 @@ class Board:
 
     def generete_move_str(self):
         moves=[]
-        lm=self.generate_moves()
+        lm=self.board.generate_moves()
         for move in lm:
             moves.append(str(move))
         return moves
@@ -37,6 +37,27 @@ class Board:
 
     def board_fen(self):
         return self.board.fen()
+
+    def get_virtual_board(self, state):
+        return chess.Board(state)
+
+    def turn_virtual(self, vboard):
+        return vboard.turn
+
+    def get_virtual_move_str(self, vboard):
+        moves=[]
+        for move in vboard.legal_moves:
+            moves.append(str(move))
+        return moves
+
+    def make_virtual_move(self, move, vboard):
+        vboard.push(chess.Move.from_uci(move))
+        vb_fen=vboard.fen()
+        vboard.pop()
+        return vb_fen
+
+    def turn(self):
+        return self.board.turn
 
     def check_state_outcome(self, random_state):
         boardNew=chess.Board(random_state)
