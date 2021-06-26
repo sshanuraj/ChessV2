@@ -1,7 +1,7 @@
 from Board import Board
-from MCTS import MCTS
-from ChessVars include *
-from ChessImports include *
+from MCTS import MCTSAgent
+from ChessVars import *
+from ChessImports import *
 
 class Chess:
     def __init__(self):
@@ -13,13 +13,16 @@ class Chess:
     def play(self, w, b, n):
         for i in range(n):
             moves=[]
-            n_iterations=10
+            n_iterations=1000
+            self.board.reset()
             while True:
                 #white generates move
-                move=w.get_best(n_iterations, self.board, moves)
+                moveIndex=w.get_best(n_iterations, self.board, moves)
+                move=self.board.generate_move_str()[moveIndex]
                 self.board.make_move(move)
-                actions.append(move)
+                moves.append([moveIndex, move])
                 result=self.check_result()
+                self.board.print_board()
                 if result==DRAW:
                     print("Draw")
                     break
@@ -28,14 +31,20 @@ class Chess:
                     break
 
                 #black generates move
-                move=b.get_best(n_iterations, self.board, moves)
+                moveIndex=b.get_best(n_iterations, self.board, moves)
+                move=self.board.generate_move_str()[moveIndex]
                 self.board.make_move(move)
-                actions.append(move)
+                moves.append([moveIndex, move])
                 result=self.check_result()
+                self.board.print_board()
                 if result==DRAW:
                     print("Draw")
                     break
                 if result==BLACK:
                     print("Black wins")
                     break
+
+chess=Chess()
+chess.play(MCTSAgent(WHITE), MCTSAgent(BLACK), 2)
+
 

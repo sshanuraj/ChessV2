@@ -25,13 +25,12 @@ class MCTSAgent:
     def rollout(self, state):
         b=Board()
         vb=b.get_virtual_board(state)
-        turn=vb.turn()
         while True:
             vlm=b.get_virtual_move_str(vb)
-            move=random.randint(0,len(vlm)-1)
+            move=rd.randint(0,len(vlm)-1)
             vb_fen=b.make_virtual_move(vlm[move], vb) #get FEN rep of board
             vb=b.get_virtual_board(vb_fen)  #create virtual board through FEN 
-            _, result=b.check_state_outcome(vb) #check result of the move made
+            _, result=b.check_state_outcome(vb_fen) #check result of the move made
             if result==self.color:
                 return 1
             if result==DRAW:
@@ -40,11 +39,13 @@ class MCTSAgent:
                 return -1
 
 
-    def get_best(self, n_terations, board, moves):
+    def get_best(self, n_iterations, board, moves):
         cnode=self.root
         if moves!=[]:
-            for move, moveIndex in moves:
-                cnode=moves[moveIndex]
+            for mtuple in moves:
+                if len(cnode.children)==0:
+                    cnode.populate_node()
+                cnode=cnode.children[mtuple[0]]
         inode=cnode
         count=0
         flag=True #represents if reset of cnode is reqd
@@ -52,8 +53,8 @@ class MCTSAgent:
             if flag:
                 cnode=inode
             if cnode==self.root:
-                cnode=cnode.max_ucb_node(self.root.visits)
-                flag=True
+                _, cnode=cnode.max_ucb_node(self.root.visits)
+                flag=False
                 continue
             if cnode.isLeaf:
                 if cnode.isTerminal:
@@ -68,6 +69,17 @@ class MCTSAgent:
                 flag=True
                 continue
             else:
-                cnode=cnode.max_ucb_node(self.root.visits)
+                if cnode.isTerminal:
+                    if cnode.isTerminal:
+                        reward=self.terminal_reward(cnode.winColor)
+                        cnode.backpropagate(reward)
+                        count+=1
+                        flag=True
+                        continue
+                if len(cnode.children)==0:
+                    cnode.populate_node()
+                _, cnode=cnode.max_ucb_node(self.root.visits)
                 flag=False
+        moveIndex, node=inode.max_ucb_node(self.root.visits)
+        return moveIndex
 

@@ -67,17 +67,18 @@ class Node:
         """%(str(self.nId), str(self.score), str(self.visits), str(self.isLeaf), str(self.parent.nId), str(self.nodeLevel), str(self.nodeIndex), str(self.state), str(self.isTerminal), str(self.winColor)))
    
     def get_parent_details(self):
-        if self.parent=None:
+        if self.parent==None:
             return None, None
         return self.parent, self.parent.nId
     
     def backpropagate(self, reward):
         self.score+=reward
-        self.visit+=1
+        self.visits+=1
+        self.isLeaf=False
         par=self.parent
-        while par not None:
+        while par!=None:
             par.score+=reward
-            par.visit+=1
+            par.visits+=1
             par=par.parent
 
     def calculate_ucb(self, N):
@@ -87,7 +88,7 @@ class Node:
 
     def max_ucb_node(self, N):
         max_ind=[]
-        max_val=-100
+        max_val=-100000000000000000000000
         l=len(self.children)
 
         if l==0:
@@ -103,10 +104,10 @@ class Node:
                 max_ind.append(i)
 
         l1=len(max_ind)
-        if l1==1:
-            return self.children[max_ind[0]]
+        if l1==0:
+            print("Woops")
         maxInd=rd.randint(0,l1-1)
-        return self.children[maxInd]
+        return maxInd, self.children[maxInd]
 
     def populate_node(self):
         if self.isTerminal:
@@ -120,5 +121,5 @@ class Node:
         for i in range(l):
             move=lm[i]
             afterMoveState=b.make_virtual_move(move, vb)
-            self.children.append(Node(self, afterMoveState, self.nodeLevel+1, i))
+            self.children.append(Node(self, str(afterMoveState), self.nodeLevel+1, i))
 

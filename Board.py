@@ -31,9 +31,9 @@ class Board:
     def generate_moves(self):
         return self.board.legal_moves
 
-    def generete_move_str(self):
+    def generate_move_str(self):
         moves=[]
-        lm=self.board.generate_moves()
+        lm=self.generate_moves()
         for move in lm:
             moves.append(str(move))
         return moves
@@ -58,7 +58,8 @@ class Board:
 
     def get_virtual_move_str(self, vboard):
         moves=[]
-        for move in vboard.legal_moves:
+        vlm=vboard.legal_moves
+        for move in vlm:
             moves.append(str(move))
         return moves
 
@@ -72,7 +73,7 @@ class Board:
         return self.board.turn
 
     def check_state_outcome(self, random_state):
-        boardNew=chess.Board(random_state)
+        boardNew=chess.Board(str(random_state))
         outcome=boardNew.outcome()
         if outcome is None:
             return False, NA
