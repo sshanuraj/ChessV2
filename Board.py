@@ -15,6 +15,18 @@ class Board:
         if self.board.is_stalemate() or self.board.is_insufficient_material() or self.board.is_fivefold_repetition() or self.board.is_seventyfive_moves():
             return True
         return False
+    
+    def check_outcome(self):
+        oc=self.board.outcome()
+        if oc is None:
+            return NA
+        if oc.result()=="1-0":
+            return WHITE
+        elif oc.result()=="0-1":
+            return BLACK
+        else:
+            return DRAW
+        return DRAW
 
     def generate_moves(self):
         return self.board.legal_moves

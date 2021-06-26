@@ -17,6 +17,7 @@ node:
         isWin bool acts as terminal node
         winColor = w/b/draw/NA -- > 1/2/0/-1
 """
+
 INF=100000000
 INI_ID = 0 
 
@@ -30,7 +31,7 @@ class Node:
         self.parent=parent
         self.nodeLevel=nodeLevel
         self.nodeIndex=nodeIndex
-        #chess details
+
         self.state=state
         self.children=[]
         self.isTerminal, self.winColor= Board().check_state_outcome(self.state) 
@@ -64,7 +65,21 @@ class Node:
         IsTerminal: %s
         Win Color:  %s
         """%(str(self.nId), str(self.score), str(self.visits), str(self.isLeaf), str(self.parent.nId), str(self.nodeLevel), str(self.nodeIndex), str(self.state), str(self.isTerminal), str(self.winColor)))
+   
+    def get_parent_details(self):
+        if self.parent=None:
+            return None, None
+        return self.parent, self.parent.nId
     
+    def backpropagate(self, reward):
+        self.score+=reward
+        self.visit+=1
+        par=self.parent
+        while par not None:
+            par.score+=reward
+            par.visit+=1
+            par=par.parent
+
     def calculate_ucb(self, N):
         if self.visits==0:
             return INF
@@ -96,6 +111,7 @@ class Node:
     def populate_node(self):
         if self.isTerminal:
             return False
+        self.isLeaf=False
         curr_state=self.state
         b=Board()
         vb=b.get_virtual_board(curr_state)
@@ -106,9 +122,3 @@ class Node:
             afterMoveState=b.make_virtual_move(move, vb)
             self.children.append(Node(self, afterMoveState, self.nodeLevel+1, i))
 
-b=Board()
-root=Node(None, b.board_fen(), 0, 0)
-root.populate_node()
-root.children[0].populate_node()
-for i in root.children[0].children:
-    i.show_node()
