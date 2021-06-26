@@ -12,7 +12,7 @@ class Board:
         return self.board.is_checkmate()
 
     def is_draw(self):
-        if self.board.is_stalemate() or self.board.is_insufficient_material() or self.board.is_fivefold_repetition() or self.board.is_seventyfive_moves():
+        if self.board.is_stalemate() or self.board.is_insufficient_material() or self.board.can_claim_threefold_repetition() or self.board.is_fivefold_repetition() or self.board.can_claim_fifty_moves() or self.board.is_seventyfive_moves():
             return True
         return False
     

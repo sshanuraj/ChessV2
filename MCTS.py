@@ -2,6 +2,7 @@ from ChessImports import *
 from ChessVars import *
 from Node import Node
 from Board import Board
+from logger import log
 
 """
 Selection-->Expansion-->Rollout/Simulation-->Backpropagation
@@ -13,6 +14,7 @@ class MCTSAgent:
         self.root=Node(None, init_state, 0, 0)
         self.root.populate_node()
         self.color=color
+        self.logger=log.Logger("CHESS_LOG.txt")
 
     def terminal_reward(self, winColor):
         if winColor==DRAW:
@@ -52,12 +54,14 @@ class MCTSAgent:
         while count<n_iterations:
             if flag:
                 cnode=inode
+                self.logger.log("LOG", "Running iteration %s"%(count))
             if cnode==self.root:
                 _, cnode=cnode.max_ucb_node(self.root.visits)
                 flag=False
                 continue
             if cnode.isLeaf:
                 if cnode.isTerminal:
+                    self.logger.log("LOG", "Found terminal node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%(str(cnode.nId),str(cnode.nodeLevel),str(cnode.nodeIndex), str(cnode.parent.nId))) 
                     reward=self.terminal_reward(cnode.winColor)
                     cnode.backpropagate(reward)
                     count+=1
@@ -71,6 +75,7 @@ class MCTSAgent:
             else:
                 if cnode.isTerminal:
                     if cnode.isTerminal:
+                        self.logger.log("LOG", "Found terminal node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%(str(cnode.nId),str(cnode.nodeLevel),str(cnode.nodeIndex), str(cnode.parent.nId)))
                         reward=self.terminal_reward(cnode.winColor)
                         cnode.backpropagate(reward)
                         count+=1
