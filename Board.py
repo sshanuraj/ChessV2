@@ -1,4 +1,5 @@
 from ChessImports import *
+from ChessVars import *
 
 class Board:
     def __init__(self):
@@ -36,3 +37,16 @@ class Board:
 
     def board_fen(self):
         return self.board.fen()
+
+    def check_state_outcome(self, random_state):
+        boardNew=chess.Board(random_state)
+        outcome=boardNew.outcome()
+        if outcome is None:
+            return False, NA
+        oc_str=outcome.result()
+        if oc_str=='1-0':
+            return True, WHITE
+        elif oc_str=='0-1':
+            return True, BLACK
+        else:
+            return True, DRAW
