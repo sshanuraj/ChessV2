@@ -14,7 +14,7 @@ class MCTSAgent:
         self.root=Node(None, init_state, 0, 0)
         self.root.populate_node()
         self.color=color
-        self.logger=log.Logger("CHESS_LOG.txt")
+        self.logger=log.Logger("CHESS_LOG.log")
 
     def terminal_reward(self, winColor):
         if winColor==DRAW:
@@ -27,6 +27,7 @@ class MCTSAgent:
     def rollout(self, state):
         b=Board()
         vb=b.get_virtual_board(state)
+        start=time.time()
         while True:
             vlm=b.get_virtual_move_str(vb)
             move=rd.randint(0,len(vlm)-1)
@@ -34,10 +35,16 @@ class MCTSAgent:
             vb=b.get_virtual_board(vb_fen)  #create virtual board through FEN 
             _, result=b.check_state_outcome(vb_fen) #check result of the move made
             if result==self.color:
+                end=time.time()
+                self.logger.log("LOG","Rollout took %s seconds, Result:[WIN] %s"%(str(end-start), str(self.color)))
                 return 1
             if result==DRAW:
+                end=time.time()
+                self.logger.log("LOG","Rollout took %s seconds, Result:[DRAW]"%(str(end-start)))
                 return 0
             if result==(3-self.color):
+                end=time.time()
+                self.logger.log("LOG","Rollout took %s seconds, Result:[LOSE] %s"%(str(end-start), str(self.color)))
                 return -1
 
 
@@ -67,6 +74,7 @@ class MCTSAgent:
                     count+=1
                     flag=True
                     continue
+                self.logger.log("LOG", "Found leaf node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%(str(cnode.nId), str(cnode.nodeLevel), str(cnode.nodeIndex), str(cnode.parent.nId)))
                 reward=self.rollout(cnode.state)
                 cnode.backpropagate(reward)
                 count+=1
