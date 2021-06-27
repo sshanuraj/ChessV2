@@ -1,6 +1,7 @@
 import inspect
 from datetime import datetime
 import sys
+import os.path
 
 """
 a log would be like:
@@ -20,8 +21,9 @@ class Logger:
     def log(self, logType, logText):
         f=open(self.fname, "a")
         cts = self.get_current_ts()
-        file_=sys.argv[0]
-        file_=file_.split(".")[0]
-        f.write(cts+" | "+file_+" | "+inspect.stack()[1][3]+" | "+str(logType)+" | "+str(logText)+" | \n")
+        filename=inspect.stack()[1].filename
+        filename=os.path.splitext(os.path.basename(filename))[0]
+        filename=filename.split(".")[0]
+        f.write(cts+" | "+filename+" | "+inspect.stack()[1][3]+" | "+str(logType)+" | "+str(logText)+" | \n")
         f.close()
 

@@ -1,3 +1,5 @@
 __pycache__
 Makefile
 CHESS_LOG.log
+logger/test.py
+logger/logs
