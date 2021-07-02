@@ -3,6 +3,10 @@ from MCTS import MCTSAgent
 from ChessVars import *
 from ChessImports import *
 from logger import log
+import dill
+
+f=open("ChessNodesW.obj", "wb")
+g=open("ChessNodesB.obj", "wb")
 
 class Chess:
     def __init__(self):
@@ -16,7 +20,7 @@ class Chess:
         self.logger.log("LOG", "-----------------NEW MCTS ITERATION-----------------")
         for i in range(n):
             moves=[]
-            n_iterations=10
+            n_iterations=40
             self.board.reset()
             count=1
             while True:
@@ -29,6 +33,7 @@ class Chess:
                 moves.append([moveIndex, move])
                 result=self.check_result()
                 self.board.print_board()
+                print()
                 self.logger.log("LOG", "Board FEN after move %s: %s"%(str(count), self.board.board_fen()))
                 if result==DRAW:
                     print("Draw")
@@ -46,7 +51,9 @@ class Chess:
                 moves.append([moveIndex, move])
                 result=self.check_result()
                 self.board.print_board()
+                print()
                 self.logger.log("LOG", "Board FEN after move %s: %s"%(str(count), self.board.board_fen()))
+                #self.logger.log("LOG", "Moves played till now: %s"%(str(moves)))
                 if result==DRAW:
                     print("Draw")
                     break
@@ -56,6 +63,12 @@ class Chess:
                 count+=1
 
 chess=Chess()
-chess.play(MCTSAgent(WHITE), MCTSAgent(BLACK), 1)
+w=MCTSAgent(WHITE)
+b=MCTSAgent(BLACK)
+chess.play(w, b, 1)
+dill.dump(w.nodes, f)
+dill.dump(b.nodes, g)
+f.close()
+g.close()
 
 

@@ -3,3 +3,6 @@ Makefile
 CHESS_LOG.log
 logger/test.py
 logger/logs
+*.obj
+try1.py
+try2.py
