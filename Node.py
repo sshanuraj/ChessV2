@@ -112,7 +112,6 @@ class Node:
             print("Woops")
 
         maxInd=rd.randint(0,l1-1)
-        global logger
         self.logger.log("LOG", "Returning Max UCB Node ID: %s"%(str(nodes_dict[self.children[maxInd]].nId)))
         return maxInd, nodes_dict[self.children[maxInd]]
 

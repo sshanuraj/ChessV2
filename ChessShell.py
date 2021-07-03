@@ -28,22 +28,23 @@ def show_node(color, nId):
         else:
             node=chessNodesBlack[nId]
             print("Black Player Node")
-
+    nIdOfMove = "None" if node.nIdOfMove==None else str(node.nIdOfMove)
     print("""
-Node ID:    %s
-Score:      %s
-Visits:     %s
-IsLeaf:     %s
-Parent ID:  %s
-Node Level: %s
-Node Index: %s
-Root Color: %s
-State:      %s
-IsTerminal: %s
-Win Color:  %s
+Node ID:         %s
+Score:           %s
+Visits:          %s
+IsLeaf:          %s
+Parent ID:       %s
+Node Level:      %s
+Node Index:      %s
+Root Color:      %s
+State:           %s
+Node Id of Move: %s
+IsTerminal:      %s
+Win Color:       %s
 """%(str(node.nId), str(node.score), str(node.visits), str(node.isLeaf),
 str(node.parent), str(node.nodeLevel), str(node.nodeIndex), str(node.rootColor), str(node.state),
-str(node.isTerminal), str(node.winColor)))
+nIdOfMove, str(node.isTerminal), str(node.winColor)))
 
     if len(node.children)!=0:
         print("Children Node IDs:")
@@ -83,6 +84,43 @@ def traverse_up(up, last_nId, last_color):
         show_node(last_color, nId)
     return nId
 
+def traverse_down(down, last_nId, last_color):
+    if last_color==NA:
+        print("No previous ID encountered.")
+        return last_nId
+    count=0
+    nId=last_nId
+    while down>count:
+        if last_color==WHITE:
+            if chessNodesW[nId].isTerminal:
+                print("Encountered node is terminal..ending traversal")
+                show_node(last_color, nId)
+                return nId
+            else:
+                count+=1
+                if chessNodesW[nId].nIdOfMove!=None:
+                    print("Going down")
+                    nId=chessNodesW[nId].nIdOfMove
+                else:
+                    print("No next move found, returning current node")
+                    show_node(last_color, nId)
+                    return nId
+        else:
+            if chessNodesB[nId].isTerminal:
+                print("Encountered node is terminal..ending traversal")
+                show_node(last_color, nId)
+                return nId
+            else:
+                count+=1
+                if chessNodesB[nId].nIdOfMove!=None:
+                    print("Going down")
+                    nId=chessNodesB[nId].nIdOfMove
+                else:
+                    print("No next move found, returning current node")
+                    show_node(last_color, nId)
+                    return nId
+    show_node(last_color, nId)
+    return nId
             
 #----------------------------------------------------------------------------------------
 
@@ -93,10 +131,12 @@ Explore nodes of the most recently played game..
 Commands to start of with:
     wnode [Node ID] - Explore a white node with some Node ID
     bnode [Node ID] - Explore a black node with some Node ID
+    up [int]        - Go up moves from last searched node
+    down [int]      - Go down moves from last searched node
     exit - Exit from command line
 """.strip())
 
-commands={"help":1, "wnode":2, "bnode":3, "up":4, "exit":4}
+commands={"help":1, "wnode":2, "bnode":3, "up":4, "down":5, "exit":6}
 last_nId=-1
 last_color=NA
 
@@ -124,9 +164,12 @@ while True:
                 else:
                     up=int(qsplit[1])
                     last_nId=traverse_up(up, last_nId, last_color)
+            elif main_query=="down":
+                down=int(qsplit[1])
+                last_nId=traverse_down(down, last_nId, last_color)
                     
         except:
-            print("ID should be numeric")
+            print("ID should be numeric. In Except")
     elif main_query=="exit":
         break
     else:
