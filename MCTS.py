@@ -82,30 +82,30 @@ class MCTSAgent:
             _, result=b.check_state_outcome(vb_fen) #check result of the move made
             if result==self.color:
                 end=time.time()
-                self.logger.log("LOG","Rollout took %s seconds, Result:[WIN] %s"%(str(end-start), str(self.color)))
+                #self.logger.log("LOG","Rollout took %s seconds, Result:[WIN] %s"%(str(end-start), str(self.color)))
                 return 1
             if result==DRAW:
                 end=time.time()
-                self.logger.log("LOG","Rollout took %s seconds, Result:[DRAW]"%(str(end-start)))
+                #self.logger.log("LOG","Rollout took %s seconds, Result:[DRAW]"%(str(end-start)))
                 return 0
             if result==(3-self.color):
                 end=time.time()
-                self.logger.log("LOG","Rollout took %s seconds, Result:[LOSE] %s"%(str(end-start), str(self.color)))
+                #self.logger.log("LOG","Rollout took %s seconds, Result:[LOSE] %s"%(str(end-start), str(self.color)))
                 return -1
             count+=1
-            if count==30:
+            if count==10:
                 val=self.v_evaluate(vb)
                 if val>0:
                     end=time.time()
-                    self.logger.log("LOG","Rollout took %s seconds, Result:[WIN] %s"%(str(end-start), str(self.color)))
+                    #self.logger.log("LOG","Rollout took %s seconds, Result:[WIN] %s"%(str(end-start), str(self.color)))
                     return 1
                 elif val<0:
                     end=time.time()
-                    self.logger.log("LOG","Rollout took %s seconds, Result:[LOSE] %s"%(str(end-start), str(self.color)))
+                    #self.logger.log("LOG","Rollout took %s seconds, Result:[LOSE] %s"%(str(end-start), str(self.color)))
                     return -1
                 else:
                     end=time.time()
-                    self.logger.log("LOG","Rollout took %s seconds, Result:[DRAW]"%(str(end-start)))
+                    #self.logger.log("LOG","Rollout took %s seconds, Result:[DRAW]"%(str(end-start)))
                     return 0
 
     def get_best(self, n_iterations, board, moves):
@@ -114,6 +114,7 @@ class MCTSAgent:
             for mtuple in moves:
                 if len(cnode.children)==0:
                     cnode.populate_node(self.nodes)
+                cnode.nIdOfMove=self.nodes[cnode.children[mtuple[0]]].nId
                 cnode=self.nodes[cnode.children[mtuple[0]]]
         inode=cnode
         assert inode.state==board.board_fen() 
@@ -124,22 +125,22 @@ class MCTSAgent:
                 cnode=inode
                 self.logger.log("LOG", "Running iteration %s"%(count))
             if cnode==self.root:
-                self.logger.log("LOG", "Finding Max UCB Node, initial search from root")
+                #self.logger.log("LOG", "Finding Max UCB Node, initial search from root")
                 _, cnode=cnode.max_ucb_node(self.root.visits, self.nodes)
                 flag=False
                 continue
             if cnode.visits==0:
                 if cnode.isTerminal:
-                    self.logger.log("LOG", "Found terminal node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%
-                        (str(cnode.nId),str(cnode.nodeLevel),str(cnode.nodeIndex), str(cnode.parent))) 
+                    #self.logger.log("LOG", "Found terminal node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%
+                        #(str(cnode.nId),str(cnode.nodeLevel),str(cnode.nodeIndex), str(cnode.parent))) 
                     reward=self.terminal_reward(cnode.winColor)
                     cnode.backpropagate(reward, self.nodes)
                     count+=1
                     flag=True
                     continue
 
-                self.logger.log("LOG", "Found unvisited node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%
-                    (str(cnode.nId), str(cnode.nodeLevel), str(cnode.nodeIndex), str(cnode.parent)))
+                #self.logger.log("LOG", "Found unvisited node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%
+                    #(str(cnode.nId), str(cnode.nodeLevel), str(cnode.nodeIndex), str(cnode.parent)))
                 reward=self.rollout(cnode.state)
                 cnode.backpropagate(reward, self.nodes)
                 count+=1
@@ -147,8 +148,8 @@ class MCTSAgent:
                 continue
             else:
                 if cnode.isTerminal:
-                    self.logger.log("LOG", "Found terminal node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%
-                        (str(cnode.nId),str(cnode.nodeLevel),str(cnode.nodeIndex), str(cnode.parent)))
+                    #self.logger.log("LOG", "Found terminal node with Node ID: %s, Node Level: %s, Node Index: %s, Parent ID: %s"%
+                        #(str(cnode.nId),str(cnode.nodeLevel),str(cnode.nodeIndex), str(cnode.parent)))
                     reward=self.terminal_reward(cnode.winColor)
                     cnode.backpropagate(reward, self.nodes)
                     count+=1
@@ -156,7 +157,7 @@ class MCTSAgent:
                     continue
                 if len(cnode.children)==0:
                     cnode.populate_node(self.nodes)
-                self.logger.log("LOG", "Finding Max UCB Node Final")
+                #self.logger.log("LOG", "Finding Max UCB Node Final")
                 _, cnode=cnode.max_ucb_node(self.root.visits, self.nodes)
                 flag=False
         moveIndex, node=inode.max_ucb_node(self.root.visits, self.nodes)

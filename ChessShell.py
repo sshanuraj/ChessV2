@@ -6,8 +6,8 @@ import dill
 f=open("ChessNodesW.obj", "rb")
 g=open("ChessNodesB.obj", "rb")
 
-chessNodesWhite=dill.load(f)
-chessNodesBlack=dill.load(g)
+chessNodesWhite=dill.load(f).nodes
+chessNodesBlack=dill.load(g).nodes
 
 f.close()
 g.close()
@@ -92,29 +92,29 @@ def traverse_down(down, last_nId, last_color):
     nId=last_nId
     while down>count:
         if last_color==WHITE:
-            if chessNodesW[nId].isTerminal:
+            if chessNodesWhite[nId].isTerminal:
                 print("Encountered node is terminal..ending traversal")
                 show_node(last_color, nId)
                 return nId
             else:
                 count+=1
-                if chessNodesW[nId].nIdOfMove!=None:
+                if chessNodesWhite[nId].nIdOfMove!=None:
                     print("Going down")
-                    nId=chessNodesW[nId].nIdOfMove
+                    nId=chessNodesWhite[nId].nIdOfMove
                 else:
                     print("No next move found, returning current node")
                     show_node(last_color, nId)
                     return nId
         else:
-            if chessNodesB[nId].isTerminal:
+            if chessNodesBlack[nId].isTerminal:
                 print("Encountered node is terminal..ending traversal")
                 show_node(last_color, nId)
                 return nId
             else:
                 count+=1
-                if chessNodesB[nId].nIdOfMove!=None:
+                if chessNodesBlack[nId].nIdOfMove!=None:
                     print("Going down")
-                    nId=chessNodesB[nId].nIdOfMove
+                    nId=chessNodesBlack[nId].nIdOfMove
                 else:
                     print("No next move found, returning current node")
                     show_node(last_color, nId)

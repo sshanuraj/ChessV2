@@ -19,11 +19,21 @@ node:
         winColor = w/b/draw/NA -- > 1/2/0/-1
 """
 
+f=open("ChGlobal.txt", "r")
+f.seek(0)
+ini_ids=f.readlines()
 INF=100000000
-INI_ID_W = 0
-INI_ID_B = 0 
+INI_ID_W = int(ini_ids[0])
+INI_ID_B = int(ini_ids[1])
+f.close()
 
-
+def store_ids():
+    global INI_ID_W
+    global INI_ID_B
+    f=open("ChGlobal.txt", "w")
+    f.write(str(INI_ID_W)+"\n")
+    f.write(str(INI_ID_B))
+    f.close()
 
 class Node:
     def __init__(self, parent, state, nodeLevel, nodeIndex, color):
@@ -112,7 +122,7 @@ class Node:
             print("Woops")
 
         maxInd=rd.randint(0,l1-1)
-        self.logger.log("LOG", "Returning Max UCB Node ID: %s"%(str(nodes_dict[self.children[maxInd]].nId)))
+#        self.logger.log("LOG", "Returning Max UCB Node ID: %s"%(str(nodes_dict[self.children[maxInd]].nId)))
         return maxInd, nodes_dict[self.children[maxInd]]
 
     def populate_node(self, nodes_dict):
